@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+AskPupkin
+{% endblock %}
+
+{% block content %}
+<div class="col-8">
+    <div class="row mb-2 ">
+        <div class="col-3 d-flex flex-column">
+            <img src={% static "profile.png" %} class="img-fluid rounded-start" alt="...">
+            <input type="number" class="form-control" value={{question.value}}>
+        </div>
+        <div class="col-9 d-flex flex-column">
+            <h2>{{question.title}}</h2>
+            <p class="card-text mb-auto">{{question.text}}</p>
+            <p class="card-text">Tags:
+                {% for tag in question.tags%}
+                <a href={% url 'tagged_questions' tag %}>tag</a>
+                {%endfor%}
+            </p>
+        </div>
+    </div>
+    <hr>
+    {% for element in answers_list %}
+    {% include 'answer_card.html' with answer=element %}
+    {% empty %}
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">Нет ответов</h5>
+        </div>
+    </div>
+    {% endfor %}
+    <hr>
+    <div class="g-1 mb-3">
+        <textarea class="form-control" rows="6"></textarea>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mt-2">Answer</button>
+    </div>
+</div>
+{% endblock %}

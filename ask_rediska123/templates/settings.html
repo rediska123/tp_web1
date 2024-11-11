@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+AskPupkin
+{% endblock %}
+
+{% block header %}
+<div class="col-md-auto">
+    <h2>Settings: Dr. Pepper</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-6">
+    <div class="row align-items-start mx-1 mb-3">
+        <div class="col-5">
+            <label class="col-form-label">Name</label>
+        </div>
+        <div class="col-7">
+            <input class="form-control">
+        </div>
+    </div>
+    <div class="row align-items-start mx-1 mb-3">
+        <div class="col-5">
+            <label class="col-form-label">E-mail</label>
+        </div>
+        <div class="col-7">
+            <input class="form-control">
+        </div>
+    </div>
+    <div class="row align-items-start mx-1 mb-3">
+        <div class="col-5">
+            <label class="col-form-label">Nickname</label>
+        </div>
+        <div class="col-7">
+            <input class="form-control">
+        </div>
+    </div>
+    <div class="row align-items-start mx-1 mb-3">
+        <div class="col-5">
+            <label class="col-form-label">Upload avatar</label>
+        </div>
+        <div class="col-7">
+            <div class="col-6">
+                <img src="https://cdn-icons-png.flaticon.com/512/4874/4874875.png" class="img-fluid rounded-start"alt="...">
+            </div>
+            <div class="input-group">
+                <input type="file" style="content: '';" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row align-items-center mx-1 mt-2">
+        <div class="col-5"></div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mt-2">Save</button>
+        </div>
+    </div>
+</div>
+<div class="col-2"></div>
+{% endblock %}
