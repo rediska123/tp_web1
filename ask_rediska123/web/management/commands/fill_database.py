@@ -95,14 +95,18 @@ class Command(BaseCommand):
         
         # Создание лайков/дизлайков на вопросы
         if questionlike.objects.count() < 100_000:
-            questionlikes_list = [
-                questionlike(
-                    value=random.randint(1, 2),
-                    profile=random.choice(profiles_list),
-                    question=random.choice(questions_list)
-                )
-                for i in range(ratio * 20)
-            ]
+            unique_questionlikes = set()
+            questionlikes_list = []
+
+            while len(questionlikes_list) < ratio * 20:
+                random_question = random.choice(questions_list)
+                random_profile = random.choice(profiles_list)
+                if (random_question.id, random_profile.id) not in unique_questionlikes:
+                    unique_questionlikes.add((random_question.id, random_profile.id))
+                    questionlikes_list.append( questionlike(
+                        value=random.randint(1, 2),
+                        profile=random_profile,
+                        question=random_question))
             questionlike.objects.bulk_create(questionlikes_list)
         else:
             questionlikes_list = list(questionlike.objects.filter())
@@ -110,14 +114,18 @@ class Command(BaseCommand):
         
         # Создание лайков/дизлайков на ответы
         if answerlike.objects.count() < 1_000_000:
-            answerlikes_list = [
-                answerlike(
-                    value=random.randint(1, 2), 
-                    profile=random.choice(profiles_list),
-                    answer=random.choice(answers_list)
-                )
-                for i in range(ratio * 180)
-            ]
+            unique_answerlikes = set()
+            answerlikes_list = []
+
+            while len(answerlikes_list) < ratio * 180:
+                random_answer = random.choice(answers_list)
+                random_profile = random.choice(profiles_list)
+                if (random_answer.id, random_profile.id) not in unique_answerlikes:
+                    unique_answerlikes.add((random_answer.id, random_profile.id))
+                    answerlikes_list.append( answerlike(
+                        value=random.randint(1, 2),
+                        profile=random_profile,
+                        answer=random_answer))
             answerlike.objects.bulk_create(answerlikes_list)
         else:
             answerlikes_list = list(answerlike.objects.filter())

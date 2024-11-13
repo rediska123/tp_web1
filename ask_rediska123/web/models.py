@@ -77,6 +77,7 @@ class questionlike(models.Model):
     class Meta:
         verbose_name = "questionlike"
         verbose_name_plural = "questionlikes"
+        unique_together = [["question", "profile"]]
 
     def __str__(self):
         return self.question.title[:30] + "..."
@@ -95,6 +96,7 @@ class answerlike(models.Model):
     class Meta:
         verbose_name = "answerlike"
         verbose_name_plural = "answerlikes"
+        unique_together = [["answer", "profile"]]
 
     def __str__(self):
         return self.answer.title[:30] + "..."
