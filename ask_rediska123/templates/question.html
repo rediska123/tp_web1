@@ -13,15 +13,16 @@ AskPupkin
 <div class="col-8">
     <div class="row mb-2 ">
         <div class="col-3 d-flex flex-column">
-            <img src={% static "profile.png" %} class="img-fluid rounded-start" alt="...">
-            <input type="number" class="form-control" value={{question.value}}>
+            <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
+            <p class="text-center">{{question.author.user.username}}</p>
+            <input type="number" class="form-control" value={{question.rating}}>
         </div>
         <div class="col-9 d-flex flex-column">
             <h2>{{question.title}}</h2>
             <p class="card-text mb-auto">{{question.text}}</p>
             <p class="card-text">Tags:
-                {% for tag in question.tags%}
-                <a href={% url 'tagged_questions' tag %}>tag</a>
+                {% for tag in question.tags.all %}
+                <a href={% url 'tagged_questions' tag %}>{{tag}}</a>
                 {%endfor%}
             </p>
         </div>

@@ -17,7 +17,7 @@
         <!-- "AskPupkin" и строка поиска одинакова для всех страниц -->
         <div class="row align-items-center">
             <div class="col-md-auto">
-                <a class="navbar-brand" href={% url "questions" %}><h2>AskPupkin</h2></a>
+                <a class="navbar-brand" href={% url "new_questions" %}><h2>AskPupkin</h2></a>
             </div>
             <div class="col mx-5">
                 <form class="row">
@@ -72,8 +72,8 @@
                     <p>
                     <h3>Popular Tags</h3>
                     </p>
-                    {% for tag in question.tags%}
-                        <a href={% url 'tagged_questions' tag %}>tag</a>
+                    {% for tag in question.tags.all%}
+                        <a href={% url 'tagged_questions' tag %}>{{tag}}</a>
                     {%endfor%}
                 </div>
                 <br>

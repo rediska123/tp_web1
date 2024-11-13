@@ -20,7 +20,7 @@ AskPupkin
 
 {% block content %}
 <div class="col-8">
-  {% for element in data %}
+  {% for element in questions_list %}
   {% include 'question_card.html' with question=element %}
   {% empty %}
   <div class="card my-3">

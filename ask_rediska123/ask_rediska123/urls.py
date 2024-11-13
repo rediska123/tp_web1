@@ -22,12 +22,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.questions, name='questions'),
-    path('hot', views.hot_questions, name='hot_questions'),
-    path('tag/<str:tag>', views.tagged_questions, name='tagged_questions'),
-    path('question/<int:id>', views.question, name='question'),
-    path('login', views.login, name='login'),
-    path('registration', views.registration, name='registration'),
-    path('settings', views.settings, name='settings'),
-    path('ask', views.new_question, name='new_question')
+    path('', views.new_questions_view, name='new_questions'),
+    path('hot', views.hot_questions_view, name='hot_questions'),
+    path('tag/<str:tag_name>', views.tagged_questions_view, name='tagged_questions'),
+    path('question/<int:id>', views.question_view, name='question'),
+    path('login', views.login_view, name='login'),
+    path('registration', views.registration_view, name='registration'),
+    path('settings', views.settings_view, name='settings'),
+    path('ask', views.new_question_view, name='new_question'),
 ]
+
+if settings.DEBUG:  
+    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

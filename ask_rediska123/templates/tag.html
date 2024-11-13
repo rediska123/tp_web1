@@ -11,13 +11,13 @@ AskPupkin
 
 {% block header %}
 <div class="col-md-auto">
-  <h2>Tags: {{question.tag}}</h2>
+  <h2>Tags: {{tag}}</h2>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="col-8">
-  {% for element in data %}
+  {% for element in questions_list %}
   {% include 'question_card.html' with question=element %}
   {% empty %}
   <div class="card my-3">
@@ -26,5 +26,6 @@ AskPupkin
     </div>
   </div>
   {% endfor %}
+  {% include 'paginator.html' with current_page=page%}
 </div>
 {% endblock %}

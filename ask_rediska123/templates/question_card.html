@@ -3,24 +3,25 @@
 <div class="card my-3">
     <div class="row g-0">
       <div class="col-md-2 my-2 ms-2">
-        <img src={% static "profile.png" %} class="img-fluid rounded-start" alt="...">
-        <input type="number" class="form-control">
+        <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
+        <p class="text-center">{{question.author.user.username}}</p>
+        <input type="number" class="form-control" value={{question.rating}}>
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <a href={% url "question" question.question.id %}>
-            <h5 class="card-title">{{question.question.title}}</h5>
+          <a href={% url "question" question.id %}>
+            <h5 class="card-title">{{question.title}}</h5>
           </a>
-          <p class="card-text">{{question.question.text}}</p>
+          <p class="card-text">{{question.text}}</p>
           <div class="row d-flex align-items-end">
             <div class="col-auto">
-              <a href={% url "question" question.question.id %}>
+              <a href={% url "question" question.id %}>
                 <h6 class="card-text">Answers({{question.answers_amount}})</h6>
               </a>
             </div>
             <div class="col-auto">
               <p class="card-text">Tags:
-                {% for tag in question.question.tags%}
+                {% for tag in question.tags.all%}
                  <a href={% url "tagged_questions" tag %}>{{tag}}</a>
                  {%endfor%}
                 </p>

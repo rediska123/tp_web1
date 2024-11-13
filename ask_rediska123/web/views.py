@@ -2,28 +2,11 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 import copy
-import random
-
-questions_list = []
-for i in range(1,30):
-  questions_list.append({
-    'title': 'title' + str(i),
-    'id': i,
-    'text': 'text' + str(i),
-    'tags': ['tag'+str(i), 'tag'+str(i+1), 'tag'+str(i+2)]
-  })
-answers_list = []
-for i in range(30):
-    answers_list.append([])
-    for j in range(5):
-        answers_list[i].append({
-        'id': i*5 + j,
-        'text': 'text' + str(i*5 + j),
-        'flag': random.choice(["", "checked"])
-        })
+from web.models import *
+from django.db.models import *
 
 def paginate(objects_list, request, per_page=10):
-    paginator = Paginator(objects_list, 10)
+    paginator = Paginator(objects_list, per_page)
     page_number = int(request.GET.get("page", 1))
     if page_number < 1:
         page_number = 1
@@ -31,84 +14,68 @@ def paginate(objects_list, request, per_page=10):
         page_number = paginator.num_pages
     current_page = paginator.get_page(page_number)
     return {
-        'questions_list': current_page.object_list, 
+        'objects_list': current_page.object_list, 
         'current_page': current_page
     }
 
 
-def questions(request):
+def new_questions_view(request):
+    questions_list = question.objects.new_questions()
     current_page = paginate(questions_list, request)
-    data = []
-    current_page_questions_list = current_page["questions_list"]
-    for i in range(len(current_page_questions_list)):
-        data.append({
-            "question": current_page_questions_list[i],
-            "answers_amount": len(answers_list[current_page_questions_list[i]['id']])
-        })
-    print(data)
+    current_page_questions_list = current_page["objects_list"]
     return render(request, 'questions.html', {
-        'data': data,
+        'questions_list': current_page_questions_list,
         'page': current_page["current_page"],
         'login': True
     })
 
-def hot_questions(request):
-    hot_questions_list = copy.deepcopy(questions_list)
-    hot_questions_list.reverse()
-    current_page = paginate(hot_questions_list, request)
-    data = []
-    current_page_questions_list = tuple(current_page["questions_list"])
-    for i in range(len(current_page_questions_list)):
-        data.append({
-            "question": current_page_questions_list[i],
-            "answers_amount": len(answers_list[current_page_questions_list[i]['id']])
-        })
+def hot_questions_view(request):
+    questions_list = question.objects.hot_questions()
+    current_page = paginate(questions_list, request)
+    current_page_questions_list = current_page["objects_list"]
+    print(len(current_page_questions_list))
     return render(request, 'hot.html', {
-        'data': data,
+        'questions_list': current_page_questions_list,
         'page': current_page["current_page"],
         'login': True
     })
 
-def tagged_questions(request, tag):
-    data = []
-    for i in questions_list:
-        if tag in i['tags']:
-            data.append({
-                "question": i,
-                "answers_amount": len(answers_list[i['id']])
-            })
-    current_page = paginate(data, request)
-    return render(request, 'questions.html', {
-        'data': data,
+def tagged_questions_view(request, tag_name):
+    questions_list = question.objects.tagged_questions(tag_name)
+    current_page = paginate(questions_list, request)
+    current_page_questions_list = current_page["objects_list"]
+    return render(request, 'tag.html', {
+        'tag': tag_name,
+        'questions_list': current_page_questions_list,
         'page': current_page["current_page"],
         'login': True
     })
 
-def question(request, id):
-    print(answers_list)
+def question_view(request, id):
+    answers_list = answer.objects.question_answers(id)
+    answered_question = question.objects.get(id=id)
     return render(request, 'question.html', {
-        'title': questions_list[id-1]['title'],
-        'question': questions_list[id-1],
-        'answers_list': answers_list[id-1],
+        'question': answered_question,
+        'answers_list': answers_list,
         'login': True
     })
 
-def login(request):
+def login_view(request):
     return render(request, 'login.html', {
         'login': False
     })
 
-def settings(request):
+def settings_view(request):
     return render(request, 'settings.html', {
         'login': True
     })
 
-def registration(request):
+def registration_view(request):
     return render(request, 'registration.html', {
         'login': False
     })
 
-def new_question(request):
+def new_question_view(request):
     return render(request, 'new_question.html', {
         'login': True
     })
