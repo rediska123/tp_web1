@@ -72,9 +72,15 @@
                     <p>
                     <h3>Popular Tags</h3>
                     </p>
-                    {% for tag in question.tags.all%}
-                        <a href={% url 'tagged_questions' tag %}>{{tag}}</a>
-                    {%endfor%}
+                    <a href={% url "tagged_questions" "Think."%}>Think.</a>
+                    <a href={% url "tagged_questions" "Blue."%}>Blue.</a>
+                    <a href={% url "tagged_questions" "Big."%}>Big.</a>
+                    <a href={% url "tagged_questions" "Moment."%}>Moment.</a>
+                    <a href={% url "tagged_questions" "Bar."%}>Bar.</a>
+                    <a href={% url "tagged_questions" "What."%}>What.</a>
+                    <a href={% url "tagged_questions" "Answer."%}>Answer.</a>
+                    <a href={% url "tagged_questions" "Add."%}>Add.</a>
+                    <a href={% url "tagged_questions" "Green."%}>Green.</a>
                 </div>
                 <br>
                 <div class="card-body">
