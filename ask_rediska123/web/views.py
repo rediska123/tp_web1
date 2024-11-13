@@ -15,7 +15,9 @@ def paginate(objects_list, request, per_page=10):
     current_page = paginator.get_page(page_number)
     return {
         'objects_list': current_page.object_list, 
-        'current_page': current_page
+        'current_page': current_page,
+        'next_pages': page_number + 2,
+        'last_pages': page_number - 2
     }
 
 
@@ -25,7 +27,7 @@ def new_questions_view(request):
     current_page_questions_list = current_page["objects_list"]
     return render(request, 'questions.html', {
         'questions_list': current_page_questions_list,
-        'page': current_page["current_page"],
+        'page': current_page,
         'login': True
     })
 
@@ -36,7 +38,7 @@ def hot_questions_view(request):
     print(len(current_page_questions_list))
     return render(request, 'hot.html', {
         'questions_list': current_page_questions_list,
-        'page': current_page["current_page"],
+        'page': current_page,
         'login': True
     })
 
@@ -47,7 +49,7 @@ def tagged_questions_view(request, tag_name):
     return render(request, 'tag.html', {
         'tag': tag_name,
         'questions_list': current_page_questions_list,
-        'page': current_page["current_page"],
+        'page': current_page,
         'login': True
     })
 
