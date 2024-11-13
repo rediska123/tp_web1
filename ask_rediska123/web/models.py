@@ -63,7 +63,7 @@ class answer(models.Model):
         verbose_name = ("answer")
         verbose_name_plural = ("answers")
     def __str__(self):
-        return self.name
+        return self.text[:30] + "..."
 
 class questionlike(models.Model):
     VALUE_CHOICES = (
@@ -99,5 +99,5 @@ class answerlike(models.Model):
         unique_together = [["answer", "profile"]]
 
     def __str__(self):
-        return self.answer.title[:30] + "..."
+        return self.answer.text[:30] + "..."
     
