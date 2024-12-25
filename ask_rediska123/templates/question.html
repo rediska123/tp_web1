@@ -13,7 +13,7 @@ AskRediska123
 <div class="col-8">
     <div class="row mb-2 ">
         <div class="col-3 d-flex flex-column">
-            <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
+            <img src="{% if question.author.avatar %}{{ question.author.avatar.url }}{% else %}{% static 'profile.png' %}{% endif %}" class="img-fluid rounded-start" alt="...">
             <p class="text-center">{{question.author.user.username}}</p>
             <div class="input-group mb-1 px-1 question-card" data-id="{{question.id}}">
                 <button class="btn btn-outline-danger minus-button" type="button">-</button>

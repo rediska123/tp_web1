@@ -148,7 +148,7 @@ def new_question_view(request):
         form = QuestionForm(request.POST)
         # Проверяем корректность формы
         if form.is_valid():
-            author = profile.objects.get(user=request.user) # авто вопроса
+            author, created_flag = profile.objects.get_or_create(user=request.user) # авто вопроса
             new_question = form.save(author=author)
             return redirect('question', new_question.id) # перенаправляем на страницу нового вопроса
     return render(request, 'ask.html', {

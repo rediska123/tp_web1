@@ -3,7 +3,7 @@
 <div class="card mb-3 answer-card" data-id="{{answer.id}}">
     <div class="row g-0">
         <div class="col-3 ps-3 pe-5 py-2">
-            <img src="{{answer.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
+            <img src="{% if answer.author.avatar %}{{ answer.author.avatar.url }}{% else %}{% static 'profile.png' %}{% endif %}" class="img-fluid rounded-start" alt="...">
             <p class="text-center">{{answer.author.user.username}}</p>
             <div class="input-group mb-1 px-1">
                 <button class="btn btn-outline-danger minus-button" type="button">-</button>
