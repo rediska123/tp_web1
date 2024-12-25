@@ -32,7 +32,7 @@
             </div>
             {% if request.user.is_authenticated %}
             <div class="col-md-auto">
-                <img src="{% if user.profile.image %}{{ user.profile.image.url }}{% else %}{% static 'profile.png' %}{% endif %}" class="img-fluid" style="height:40px">
+                <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'profile.png' %}{% endif %}" class="img-fluid" style="height:40px">
             </div>
             <div class="col-md-auto ms-1">
                 

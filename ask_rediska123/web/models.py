@@ -4,12 +4,12 @@ from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
 
 class ProfileManager(models.Manager):
-    def popular_profiles(self, limit=5):
+    def popular_profiles(self, limit=10):
         return self.annotate(rating=Coalesce(Sum('question__questionlike__value'), 0) + Coalesce(Sum('answer__answerlike__value'), 0)).order_by('-rating')[:limit]
 
 class profile(models.Model):
     user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE)
-    avatar = models.ImageField(("avatar"), upload_to="uploads", height_field=None, width_field=None, max_length=None)
+    avatar = models.ImageField(("avatar"), upload_to="uploads", height_field=None, width_field=None, max_length=None, blank=True, null=True)
     objects = ProfileManager()
     class Meta:
         verbose_name = ("Profile")
@@ -19,7 +19,7 @@ class profile(models.Model):
         return self.user.username
 
 class TagManager(models.Manager):
-    def popular_tags(self, limit=8):
+    def popular_tags(self, limit=10):
         return self.annotate(amount=Count('question')).order_by('-amount')[:limit]
 
 
