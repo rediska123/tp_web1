@@ -15,7 +15,11 @@ AskRediska123
         <div class="col-3 d-flex flex-column">
             <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
             <p class="text-center">{{question.author.user.username}}</p>
-            <input type="number" class="form-control" value={{question.rating}}>
+            <div class="input-group mb-1 px-1">
+                <button class="btn btn-outline-danger minus-button" type="button">-</button>
+                <input type="text" class="form-control rating-text" value={{question.rating}} readonly>
+                <button class="btn btn-outline-success plus-button" type="button">+</button>
+            </div>
         </div>
         <div class="col-9 d-flex flex-column">
             <h2>{{question.title}}</h2>
@@ -38,11 +42,13 @@ AskRediska123
     </div>
     {% endfor %}
     <hr>
-    <div class="g-1 mb-3">
-        <textarea class="form-control" rows="6"></textarea>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary mt-2">Answer</button>
-    </div>
+    {% load django_bootstrap5 %}
+    <form action="{% url 'question' question.id %}" method="POST" class="form">
+        {% csrf_token %}
+    
+        {% bootstrap_form form %}
+    
+        {% bootstrap_button button_type="submit" content="Answer" %}
+    </form>
 </div>
 {% endblock %}

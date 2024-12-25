@@ -5,7 +5,11 @@
       <div class="col-md-2 my-2 ms-2">
         <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
         <p class="text-center">{{question.author.user.username}}</p>
-        <input type="number" class="form-control" value={{question.rating}}>
+        <div class="input-group mb-1 px-1">
+          <button class="btn btn-outline-danger minus-button" type="button">-</button>
+          <input type="text" class="form-control rating-text" value={{question.rating}} readonly>
+          <button class="btn btn-outline-success plus-button" type="button">+</button>
+        </div>
       </div>
       <div class="col-md-8">
         <div class="card-body">

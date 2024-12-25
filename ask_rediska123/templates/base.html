@@ -25,25 +25,25 @@
                         <input class="form-control" placeholder="Введите вопрос">
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Ask!</button>
+                        <a class="btn btn-primary" href={% url "new_question"%}>Ask!</a>
                     </div>
                 </form>
             </div>
-            {% if login == True %}
+            {% if request.user.is_authenticated %}
             <div class="col-md-auto">
-                <img src={% static "profile.png" %} class="img-fluid" style="height:40px">
+                <img src={{ user.profile.avatar.url }} class="img-fluid" style="height:40px">
             </div>
             <div class="col-md-auto ms-1">
                 
                 <div class="row">
-                  Dr. Pepper
+                  {{ user.username }}
                 </div>
                 <div class="row">
                   <div class="col ps-0">
                     <a href={% url "settings" %}>settings</a>
                   </div>
                   <div class="col ps-0">
-                    <a href={% url "login" %}>log out</a>
+                    <a href={% url "logout" %}>log out</a>
                   </div>
                 </div>
             </div>

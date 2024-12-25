@@ -17,33 +17,15 @@ AskRediska123
 
 {% block content %}
 <div class="col-6">
-    <div class="row align-items-start mx-1">
-        <p class="card-body text-danger">Sorry, wrong password!</p>
-    </div>
-    <div class="row align-items-start mx-1 mb-3">
-        <div class="col-5">
-            <label class="col-form-label">Login</label>
-        </div>
-        <div class="col-7">
-            <input class="form-control">
-        </div>
-    </div>
-    <div class="row align-items-start mx-1 mb-3">
-        <div class="col-5">
-            <label class="col-form-label">Password</label>
-        </div>
-        <div class="col-7">
-            <input type="password" class="form-control">
-        </div>
-    </div>
-    <div class="row align-items-center mx-1">
-        <div class="col-5"></div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary mt-3">Log in!</button>
-            
-        </div>   
-    </div>
-    <div class="row align-items-center mx-1">
+    {% load django_bootstrap5 %}
+<form action="{% url 'login' %}?next={{ next_url }}" method="POST" class="form">
+    {% csrf_token %}
+
+    {% bootstrap_form form %}
+
+    {% bootstrap_button button_type="submit" content="Log in!" %}
+</form>
+    <div class="row mx-1">
         <div class="col-5"></div>
         <div class="col-auto">
             <a href={% url "registration" %}>create new account</a>

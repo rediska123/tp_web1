@@ -1,9 +1,14 @@
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 import copy
+
+from django.urls import reverse
 from web.models import *
 from django.db.models import *
+from .forms import *
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, per_page)
@@ -19,7 +24,6 @@ def paginate(objects_list, request, per_page=10):
         'next_pages': page_number + 2,
         'last_pages': page_number - 2
     }
-
 
 def new_questions_view(request):
     questions_list = question.objects.new_questions()
@@ -56,28 +60,88 @@ def tagged_questions_view(request, tag_name):
 def question_view(request, id):
     answers_list = answer.objects.question_answers(id)
     answered_question = question.objects.get(id=id)
+    form = AnswerForm()
+    # Если нажали кнопку ответа
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        # Проверяем корректность формы
+        if form.is_valid():
+            author = profile.objects.get(user=request.user) # автор ответа
+            form.save(author=author, answered_question=answered_question)
+            form = AnswerForm() # очищаем для следующего ответа
     return render(request, 'question.html', {
         'question': answered_question,
         'answers_list': answers_list,
-        'login': True
+        'form': form
     })
 
 def login_view(request):
+    # Получаем на какую страницу перебросить после логина (параметр "next" в GET запросе), reverse - по умолчанию
+    next_url = request.GET.get('next', reverse('new_questions'))
+    form = LoginForm()
+    # Если нажали кнопку логина
+    if request.method == 'POST':
+        form = LoginForm(request.POST) # Заполняем форму введенными данными
+        # Проеверяем корректность формы
+        if form.is_valid(): 
+            user = auth.authenticate(request, **form.cleaned_data)
+            # Если такой пользователь есть в системе, то авторизируемся и переходим на следующую страницу
+            if user:
+                auth.login(request, user)
+                return redirect(next_url)
+            else: # Если такого пользователя нет в системе
+                form.add_error(None, 'Sorry, wrong login or password!')
     return render(request, 'login.html', {
-        'login': False
+        'form': form,
+        'next_url': next_url
     })
 
+# Добавили декоратор логина, если на страницу пытается зайти гость, то его перенаправит на страницу логина "login_url"
+@login_required(login_url='login')
 def settings_view(request):
+    form = ProfileForm(instance=request.user) # Передаём параметр пользователя для заполнения полей
+    # Если нажади на кнопку сохранения
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
+        # Если заполнено правильно, то сохраняем
+        if form.is_valid():
+            form.save()  
     return render(request, 'settings.html', {
-        'login': True
+        'form': form
     })
 
 def registration_view(request):
+    form = RegistrationForm()
+    # Если нажади на кнопку регистрации
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES)
+        # Если заполнено правильно, то сохраняем
+        if form.is_valid():
+            user = form.save()
+            user = auth.authenticate(request, **form.cleaned_data) 
+            auth.login(request, user)
+            return redirect(reverse('new_questions'))
     return render(request, 'registration.html', {
-        'login': False
+        'form': form
     })
 
+# Добавили декоратор логина, если на страницу пытается зайти гость, то его перенаправит на страницу логина "login_url"
+@login_required(login_url='login')
 def new_question_view(request):
-    return render(request, 'new_question.html', {
-        'login': True
+    form = QuestionForm()
+    # Если нажали кнопку нового вопроса
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        # Проверяем корректность формы
+        if form.is_valid():
+            author = profile.objects.get(user=request.user) # авто вопроса
+            new_question = form.save(author=author)
+            return redirect('question', new_question.id) # перенаправляем на страницу нового вопроса
+    return render(request, 'ask.html', {
+        'form': form
     })
+
+def logout(request):
+    auth.logout(request)
+    current_url = request.META.get('HTTP_REFERER', '/')
+    return redirect(current_url)

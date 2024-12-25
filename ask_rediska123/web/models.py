@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Sum
+from django.db.models.functions import Coalesce
 
 class profile(models.Model):
     user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE)
     avatar = models.ImageField(("avatar"), upload_to="uploads", height_field=None, width_field=None, max_length=None)
-    rating = models.IntegerField(("rating"))
     class Meta:
         verbose_name = ("Profile")
         verbose_name_plural = ("Profiles")
@@ -24,10 +24,10 @@ class tag(models.Model):
 
 class questionmanager(models.Manager):
     def new_questions(self):
-        return self.annotate(answers_amount=Count('answers')).order_by('-id')
+        return self.annotate().order_by('-id')
 
     def hot_questions(self):
-        return self.annotate(answers_amount=Count('answers')).order_by('-rating')
+        return self.annotate(rating=Coalesce(Sum("questionlike__value"), 0)).order_by('-rating')
 
     def tagged_questions(self, tag_name):
         return self.filter(tags__name=tag_name).annotate(answers_amount=Count('answers')).order_by('-id')
@@ -38,8 +38,14 @@ class question(models.Model):
     author = models.ForeignKey(profile, verbose_name=("author"), on_delete=models.CASCADE)
     date = models.DateField(("date"), auto_now=False, auto_now_add=True)
     tags = models.ManyToManyField(tag, verbose_name=("tags"))
-    rating = models.IntegerField(("rating"))
     objects = questionmanager()
+    
+    def rating(self):
+        return self.questionlike_set.aggregate(rating=models.Sum('value'))['rating'] or 0
+    
+    def answers_amount(self):
+        return answer.objects.filter(answered_question=self).count()
+    
     class Meta:
         verbose_name = ("question")
         verbose_name_plural = ("questions")
@@ -56,9 +62,12 @@ class answer(models.Model):
     text = models.TextField(("text"))
     author = models.ForeignKey(profile, verbose_name=("author"), on_delete=models.CASCADE)
     date = models.DateField(("date"), auto_now=False, auto_now_add=True)
-    flag = models.BooleanField(("flag"))
-    rating = models.IntegerField(("rating"))
+    flag = models.BooleanField(("flag"), default=False)
     objects = answermanager()
+    
+    def rating(self):
+        return self.answerlike_set.aggregate(rating=models.Sum('value'))['rating'] or 0
+    
     class Meta:
         verbose_name = ("answer")
         verbose_name_plural = ("answers")
