@@ -20,9 +20,10 @@
                 <a class="navbar-brand" href={% url "new_questions" %}><h2>AskRediska123</h2></a>
             </div>
             <div class="col mx-5">
-                <form class="row">
+                <form action="{% url 'search' %}" method="POST" class="input-group row"> 
+                    {% csrf_token %}
                     <div class="col">
-                        <input class="form-control" placeholder="Введите вопрос">
+                        <input class="form-control" placeholder="Введите вопрос" name="search_text">
                     </div>
                     <div class="col-auto">
                         <a class="btn btn-primary" href={% url "new_question"%}>Ask!</a>
@@ -68,31 +69,11 @@
         <div class="row">
             {% block content %}{% endblock %}
             <div class="col-4">
-                <div class="card-body">
-                    <p>
-                    <h3>Popular Tags</h3>
-                    </p>
-                    <a href={% url "tagged_questions" "Think."%}>Think.</a>
-                    <a href={% url "tagged_questions" "Blue."%}>Blue.</a>
-                    <a href={% url "tagged_questions" "Big."%}>Big.</a>
-                    <a href={% url "tagged_questions" "Moment."%}>Moment.</a>
-                    <a href={% url "tagged_questions" "Bar."%}>Bar.</a>
-                    <a href={% url "tagged_questions" "What."%}>What.</a>
-                    <a href={% url "tagged_questions" "Answer."%}>Answer.</a>
-                    <a href={% url "tagged_questions" "Add."%}>Add.</a>
-                    <a href={% url "tagged_questions" "Green."%}>Green.</a>
-                </div>
+                {% load poll_extras %}
+                {% popular_tags %}
                 <br>
-                <div class="card-body">
-                    <h3>Best members</h3>
-                    <ol style="list-style-type:  none">
-                        <li><a href="#">Mr. Freeman</a></li>
-                        <li><a href="#">Dr. House</a></li>
-                        <li><a href="#">Bender</a></li>
-                        <li><a href="#">Queen Victoria</a></li>
-                        <li><a href="#">V. Pupkin</a></li>
-                    </ol>
-                </div>
+                {% popular_profiles %}
+                
             </div>
         </div>
     </div>

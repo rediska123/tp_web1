@@ -1,0 +1,8 @@
+<div class="card-body">
+    <p>
+    <h3>Popular Tags</h3>
+    </p>
+    {% for tag in tags %}
+        <a href="{% url 'tagged_questions' tag.name %}">{{ tag.name }}</a>
+    {% endfor %}
+</div>

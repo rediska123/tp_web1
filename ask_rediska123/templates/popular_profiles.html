@@ -1,0 +1,8 @@
+<div class="card-body">
+    <h3>Best members</h3>
+    <ol style="list-style-type:  none">
+    {% for profile in profiles %}
+        <li>{{ profile.user.username }}</li>
+    {% endfor %}
+    </ol>
+</div>

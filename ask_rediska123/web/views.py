@@ -28,6 +28,17 @@ def paginate(objects_list, request, per_page=10):
         'last_pages': page_number - 2
     }
 
+def question_search(request):
+    search_text = request.POST.get('search_text', '')
+    questions_list = question.objects.search(search_text)
+    current_page = paginate(questions_list, request)
+    current_page_questions_list = current_page["objects_list"]
+    return render(request, 'search.html', {
+        'questions_list': current_page_questions_list,
+        'page': current_page,
+        'search_text': search_text
+    })
+
 def new_questions_view(request):
     questions_list = question.objects.new_questions()
     current_page = paginate(questions_list, request)

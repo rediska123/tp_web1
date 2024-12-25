@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+AskRediska123
+{% endblock %}
+
+{% block header %}
+<div class="col-md-auto">
+  <h2>Search: {{search_text}}</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="col-8">
+  {% for element in questions_list %}
+  {% include 'question_card.html' with question=element %}
+  {% empty %}
+  <div class="card my-3">
+    <div class="card-body">
+      <h5 class="card-title">Список пуст</h5>
+    </div>
+  </div>
+  {% endfor %}
+  {% include 'paginator.html' with page=page%}
+</div>
+{% endblock %}

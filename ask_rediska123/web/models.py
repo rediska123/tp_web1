@@ -1,11 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
+
+class ProfileManager(models.Manager):
+    def popular_profiles(self, limit=5):
+        return self.annotate(rating=Coalesce(Sum('question__questionlike__value'), 0) + Coalesce(Sum('answer__answerlike__value'), 0)).order_by('-rating')[:limit]
 
 class profile(models.Model):
     user = models.OneToOneField(User, verbose_name=("user"), on_delete=models.CASCADE)
     avatar = models.ImageField(("avatar"), upload_to="uploads", height_field=None, width_field=None, max_length=None)
+    objects = ProfileManager()
     class Meta:
         verbose_name = ("Profile")
         verbose_name_plural = ("Profiles")
@@ -13,8 +18,14 @@ class profile(models.Model):
     def __str__(self):
         return self.user.username
 
+class TagManager(models.Manager):
+    def popular_tags(self, limit=8):
+        return self.annotate(amount=Count('question')).order_by('-amount')[:limit]
+
+
 class tag(models.Model):
     name = models.CharField(("tag"), max_length=100)
+    objects = TagManager()
     class Meta:
         verbose_name = ("tag")
         verbose_name_plural = ("tags")
@@ -31,6 +42,9 @@ class questionmanager(models.Manager):
 
     def tagged_questions(self, tag_name):
         return self.filter(tags__name=tag_name).annotate(answers_amount=Count('answers')).order_by('-id')
+    
+    def search(self, search_text):
+        return self.filter(Q(title__icontains=search_text) | Q(text__icontains=search_text)).order_by('-id')
 
 class question(models.Model):
     title = models.CharField(("title"), max_length=254)
@@ -84,7 +98,7 @@ class questionlike(models.Model):
 
     def __str__(self):
         return self.liked_question.title[:30] + "..."
-    
+        
 class answermanager(models.Manager):
     def question_answers(self, question_id):
         return self.filter(answered_question=question_id).order_by('id')
