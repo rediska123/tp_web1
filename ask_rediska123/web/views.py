@@ -10,6 +10,9 @@ from .forms import *
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
+import json
+from django.http import JsonResponse
+
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, per_page)
     page_number = int(request.GET.get("page", 1))
@@ -145,3 +148,30 @@ def logout(request):
     auth.logout(request)
     current_url = request.META.get('HTTP_REFERER', '/')
     return redirect(current_url)
+
+def question_like_dislike(request, id):
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    if request.user == None: # Если пользватель не авторизован, то не может ставить лайки
+        return JsonResponse({"error": "No auth"}, status=400)
+    rating = questionlike.objects.like_dislike(id, request.user, data["like_dislike"])
+    return JsonResponse({"rating" : rating})
+
+
+def answer_like_dislike(request, id):
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    
+    if request.user == None: # Если пользватель не авторизован, то не может ставить лайки
+        return JsonResponse({"error": "No auth"}, status=400)
+    rating = answerlike.objects.like_dislike(id, request.user, data["like_dislike"])
+    return JsonResponse({"rating" : rating})
+
+def correct_answer(request, id):
+    user = request.user
+    answer.objects.correct(user, id)
+    return JsonResponse({"status": "OK"}, status=200)

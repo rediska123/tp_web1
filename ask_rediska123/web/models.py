@@ -52,10 +52,50 @@ class question(models.Model):
 
     def __str__(self):
         return self.title
+
+class questionlikemanager(models.Manager):
+    def like_dislike(self, question_id, user, value):
+        author = profile.objects.get(user=user)
+        liked_question = question.objects.get(id=question_id)
+        like, created_flag = questionlike.objects.get_or_create(liked_question=liked_question, author=author)
+        if like.value == 1 and value == -1: # Если был лайк и нажали дизлайк (отмена лайка)
+            like.value = 0
+        elif like.value == -1 and value == 1: # Если был дизлайк и нажали лайк (отмена дизлайка)
+            like.value = 0
+        elif like.value == 0: # Если было без оценки, то оцениваем
+            like.value = value
+        like.save()
+        return liked_question.rating()
+
+class questionlike(models.Model):
+    VALUE_CHOICES = (
+        (1, "like"),
+        (-1, "dislike")
+    )
+    value = models.IntegerField("value", choices=VALUE_CHOICES, default=1)
+    liked_question = models.ForeignKey(question, verbose_name="question", on_delete=models.CASCADE)
+    author = models.ForeignKey(profile, verbose_name="profile", on_delete=models.CASCADE)
+    objects = questionlikemanager()
+
+    class Meta:
+        verbose_name = "questionlike"
+        verbose_name_plural = "questionlikes"
+        unique_together = [["liked_question", "author"]]
+
+    def __str__(self):
+        return self.liked_question.title[:30] + "..."
     
 class answermanager(models.Manager):
     def question_answers(self, question_id):
         return self.filter(answered_question=question_id).order_by('id')
+    
+    def correct(self, user, answer_id):
+        answer = self.get(id=answer_id)
+        question_author = answer.answered_question.author.user
+        if user == question_author: # Если нажимает авто вопроса
+            answer.flag = not answer.flag
+            answer.save()
+            #print(answer.flag) # Для отладки
 
 class answer(models.Model):
     answered_question = models.ForeignKey(question, verbose_name=("question"), related_name=("answers"), on_delete=models.CASCADE) 
@@ -74,38 +114,34 @@ class answer(models.Model):
     def __str__(self):
         return self.text[:30] + "..."
 
-class questionlike(models.Model):
-    VALUE_CHOICES = (
-        (1, "like"),
-        (-1, "dislike")
-    )
-    value = models.IntegerField("value", choices=VALUE_CHOICES)
-    question = models.ForeignKey(question, verbose_name="question", on_delete=models.CASCADE)
-    profile = models.ForeignKey(profile, verbose_name="profile", on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "questionlike"
-        verbose_name_plural = "questionlikes"
-        unique_together = [["question", "profile"]]
-
-    def __str__(self):
-        return self.question.title[:30] + "..."
-
+class answerlikemanager(models.Manager):
+    def like_dislike(self, answer_id, user, value):
+        author = profile.objects.get(user=user)
+        liked_answer = answer.objects.get(id=answer_id)
+        like, created_flag = answerlike.objects.get_or_create(liked_answer=liked_answer, author=author)
+        if like.value == 1 and value == -1: # Если был лайк и нажали дизлайк (отмена лайка)
+            like.value = 0
+        elif like.value == -1 and value == 1: # Если был дизлайк и нажали лайк (отмена дизлайка)
+            like.value = 0
+        elif like.value == 0: # Если было без оценки, то оцениваем
+            like.value = value
+        like.save()
+        return liked_answer.rating()
 
 class answerlike(models.Model):
     VALUE_CHOICES = (
         (1, "like"),
         (-1, "dislike")
     )
-    value = models.IntegerField("value", choices=VALUE_CHOICES)
-    answer = models.ForeignKey(answer, verbose_name="answer", on_delete=models.CASCADE)
-    profile = models.ForeignKey(profile, verbose_name="profile", on_delete=models.CASCADE)
-    
+    value = models.IntegerField("value", choices=VALUE_CHOICES, default=1)
+    liked_answer = models.ForeignKey(answer, verbose_name="answer", on_delete=models.CASCADE)
+    author = models.ForeignKey(profile, verbose_name="profile", on_delete=models.CASCADE)
+    objects = answerlikemanager()
 
     class Meta:
         verbose_name = "answerlike"
         verbose_name_plural = "answerlikes"
-        unique_together = [["answer", "profile"]]
+        unique_together = [["liked_answer", "author"]]
 
     def __str__(self):
         return self.answer.text[:30] + "..."

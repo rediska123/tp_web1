@@ -15,7 +15,7 @@ AskRediska123
         <div class="col-3 d-flex flex-column">
             <img src="{{question.author.avatar.url}}" class="img-fluid rounded-start" alt="...">
             <p class="text-center">{{question.author.user.username}}</p>
-            <div class="input-group mb-1 px-1">
+            <div class="input-group mb-1 px-1 question-card" data-id="{{question.id}}">
                 <button class="btn btn-outline-danger minus-button" type="button">-</button>
                 <input type="text" class="form-control rating-text" value={{question.rating}} readonly>
                 <button class="btn btn-outline-success plus-button" type="button">+</button>
@@ -33,7 +33,7 @@ AskRediska123
     </div>
     <hr>
     {% for element in answers_list %}
-    {% include 'answer_card.html' with answer=element %}
+    {% include 'answer_card.html' with answer=element question_author=question.author.user %}
     {% empty %}
     <div class="card my-3">
         <div class="card-body">

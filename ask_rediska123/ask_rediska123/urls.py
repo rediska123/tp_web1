@@ -31,6 +31,9 @@ urlpatterns = [
     path('settings', views.settings_view, name='settings'),
     path('ask', views.new_question_view, name='new_question'),
     path('logout', views.logout, name='logout'),
+    path('question_like/<int:id>', views.question_like_dislike, name='question_like'),
+    path('answer_like/<int:id>', views.answer_like_dislike, name='answer_like'),
+    path('correct_answer/<int:id>', views.correct_answer, name='correct_answer')
 ]
 
 if settings.DEBUG:  
